@@ -5,7 +5,7 @@
 #include "Data.h"
 #include<iostream>
 #include<fstream>
-
+#define MAX_SIZE 1024*1024
 void Data::set(const std::pair<std::string, std::string>& data)
 {
 	if (data.first.empty() || data.second.empty())return;
@@ -52,6 +52,11 @@ std::fstream& operator>>(std::fstream& file, Data&data)
 	// TODO: insert return statement here
 	size_t size{};
 	if (!file.read(reinterpret_cast<char*>(&size), sizeof(size)))return file;
+	if (size > MAX_SIZE)
+	{
+		std::cout << "error : data file corrupted!\n";
+		std::exit(-1);
+	};
 	char* buffer{ new char[size + 1] };
 	if (!file.read(buffer, size))return file;
 	if (!buffer)return file;
@@ -59,6 +64,11 @@ std::fstream& operator>>(std::fstream& file, Data&data)
 	data._key={ buffer };
 	delete[]buffer;
 	if (!file.read(reinterpret_cast<char*>(&size), sizeof(size)))return file;
+	if (size > MAX_SIZE)
+	{
+		std::cout << "error : data file corrupted!\n";
+		std::exit(-1);
+	};
 	buffer = new char[size + 1];
 	if (!file.read(buffer, size))return file;
 	buffer[size] = '\0';
